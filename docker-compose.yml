@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  zookeeper1:
+    image: zookeeper:3.7.0
+    container_name: zookeeper-1
+    networks:
+      - kafka-cluster-network
+  zookeeper2:
+    image: zookeeper:3.7.0
+    container_name: zookeeper-2
+    networks:
+      - kafka-cluster-network
+  zookeeper3:
+    image: zookeeper:3.7.0
+    container_name: zookeeper-3
+    networks:
+      - kafka-cluster-network
+  kafka1:
+    image: wurstmeister/kafka:2.12-2.4.1
+    container_name: kafka-1
+    networks:
+      - kafka-cluster-network
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper1,zookeeper2,zookeeper3
+      KAFKA_LISTENERS: PLAINTEXT://kafka-1:9092
+  kafka2:
+    image: wurstmeister/kafka:2.12-2.4.1
+    container_name: kafka-2
+    networks:
+      - kafka-cluster-network
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper1,zookeeper2,zookeeper3
+      KAFKA_LISTENERS: PLAINTEXT://kafka-2:9092
+  kafka3:
+    image: wurstmeister/kafka:2.12-2.4.1
+    container_name: kafka-3
+    networks:
+      - kafka-cluster-network
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper1,zookeeper2,zookeeper3
+      KAFKA_LISTENERS: PLAINTEXT://kafka-3:9092
+
+networks:
+  kafka-cluster-network:
